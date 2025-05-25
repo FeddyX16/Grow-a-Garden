@@ -3,11 +3,15 @@ wait(2)
 local player = game.Players.LocalPlayer
 local backpack = player:WaitForChild("Backpack")
 
--- GUI Setup
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+-- GUI Setup (Display over everything)
+local gui = Instance.new("ScreenGui")
 gui.Name = "DuplicationGui"
 gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.DisplayOrder = 9999
+gui.Parent = player:WaitForChild("PlayerGui")
 
+-- Main Frame
 local frame = Instance.new("Frame", gui)
 frame.Size = UDim2.new(0, 250, 0, 200)
 frame.Position = UDim2.new(0.5, 0, 0.5, 0)
