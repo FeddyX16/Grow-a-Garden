@@ -1,0 +1,101 @@
+local player = game.Players.LocalPlayer
+local backpack = player:WaitForChild("Backpack")
+
+-- GUI Setup
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "DuplicationGui"
+gui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 250, 0, 180)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(0, 170, 255)
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Text = "Grow a Garden Dupe"
+title.Size = UDim2.new(1, 0, 0.2, 0)
+title.BackgroundTransparency = 1
+title.TextScaled = true
+title.TextColor3 = Color3.fromRGB(0, 255, 127)
+title.Font = Enum.Font.GothamBold
+
+-- Textbox
+local textBox = Instance.new("TextBox", frame)
+textBox.PlaceholderText = "Type a Number"
+textBox.Text = ""
+textBox.Position = UDim2.new(0.1, 0, 0.3, 0)
+textBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+textBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textBox.TextScaled = true
+textBox.ClearTextOnFocus = false
+Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 8)
+
+-- Button
+local button = Instance.new("TextButton", frame)
+button.Text = "Duplicate"
+button.Position = UDim2.new(0.25, 0, 0.6, 0)
+button.Size = UDim2.new(0.5, 0, 0.2, 0)
+button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+button.TextScaled = true
+Instance.new("UICorner", button).CornerRadius = UDim.new(0, 8)
+
+-- Animated Notification
+local notification = Instance.new("TextLabel", gui)
+notification.Size = UDim2.new(0, 250, 0, 50)
+notification.Position = UDim2.new(0.5, -125, -0.2, 0)
+notification.AnchorPoint = Vector2.new(0.5, 0)
+notification.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+notification.TextColor3 = Color3.new(1, 1, 1)
+notification.TextScaled = true
+notification.Text = ""
+notification.Visible = false
+notification.ZIndex = 5
+Instance.new("UICorner", notification).CornerRadius = UDim.new(0, 10)
+
+-- Show notification with animation
+local function showNotification(message)
+	notification.Text = message
+	notification.Visible = true
+	notification.Position = UDim2.new(0.5, -125, -0.1, 0)
+	
+	-- Tween in
+	game:GetService("TweenService"):Create(notification, TweenInfo.new(0.4), {
+		Position = UDim2.new(0.5, -125, 0.05, 0)
+	}):Play()
+	
+	wait(2)
+	
+	-- Tween out
+	game:GetService("TweenService"):Create(notification, TweenInfo.new(0.4), {
+		Position = UDim2.new(0.5, -125, -0.2, 0)
+	}):Play()
+	wait(0.4)
+	notification.Visible = false
+end
+
+-- Duplication Functionality
+button.MouseButton1Click:Connect(function()
+	local count = tonumber(textBox.Text)
+	if not count or count <= 0 then return end
+	
+	local tool = player.Character:FindFirstChildOfClass("Tool") or backpack:FindFirstChildOfClass("Tool")
+	if not tool then
+		showNotification("No pet/seed/crop found!")
+		return
+	end
+	
+	for i = 1, count do
+		local clone = tool:Clone()
+		clone.Parent = backpack
+	end
+	
+	showNotification("Duplicated " .. count .. " " .. tool.Name .. "(s)!")
+end)
